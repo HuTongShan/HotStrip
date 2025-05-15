@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>麻辣条配方计算器</title>
+    <style>
+        /* 基础样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 计算器容器 */
+        .calculator {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* 输入区域 */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        /* 进度条样式 */
+        .progress-container {
+            margin: 1rem 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: #eee;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4CAF50;
+            width: 0;
+            transition: width 0.5s ease-out;
+            border-radius: 6px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 480px) {
+            .calculator {
+                padding: 1.5rem;
+            }
+            
+            input {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2 style="text-align: center; margin-bottom: 1.5rem; color: #333;">麻辣条配方计算器</h2>
+        
+        <div class="input-group">
+            <label for="inputFlour">面粉含量（斤）</label>
+            <input type="number" 
+                   id="inputFlour" 
+                   placeholder="请输入面粉重量"
+                   min="0.1" 
+                   step="0.1"
+                   value="1">
+        </div>
+
+        <!-- 糖 -->
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>糖</span>
+                <span id="sugar">0.00 斤</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="sugarBar"></div>
+            </div>
+        </div>
+
+        <!-- 盐 -->
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>盐</span>
+                <span id="salt">0.00 斤</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="saltBar"></div>
+            </div>
+        </div>
+
+        <!-- 酱油 -->
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>酱油</span>
+                <span id="soy">0.00 斤</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="soyBar"></div>
+            </div>
+        </div>
+
+        <!-- 水 -->
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>水</span>
+                <span id="water">0.00 斤</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="waterBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 配方比例
+        const ratios = {
+            sugar: 0.016,
+            salt: 0.02,
+            soy: 0.028,
+            water: 0.48
+        };
+
+        // 进度条最大值（基于30斤面粉计算）
+        const maxValues = {
+            sugar: 30 * ratios.sugar,
+            salt: 30 * ratios.salt,
+            soy: 30 * ratios.soy,
+            water: 30 * ratios.water
+        };
+
+        // 核心计算函数
+        function calculate() {
+            const flour = parseFloat(document.getElementById("inputFlour").value) || 0;
+            
+            // 更新数值和进度条
+            updateComponent('sugar', flour);
+            updateComponent('salt', flour);
+            updateComponent('soy', flour);
+            updateComponent('water', flour);
+        }
+
+        function updateComponent(type, flour) {
+            const value = flour * ratios[type];
+            const percentage = (value / maxValues[type]) * 100;
+            
+            // 更新文字
+            document.getElementById(type).textContent = value.toFixed(2) + ' 斤';
+            
+            // 更新进度条
+            document.getElementById(type + 'Bar').style.width = Math.min(percentage, 100) + '%';
+        }
+
+        // 初始化计算
+        calculate();
+        
+        // 实时监听输入
+        document.getElementById("inputFlour").addEventListener('input', calculate);
+    </script>
+</body>
+</html>
